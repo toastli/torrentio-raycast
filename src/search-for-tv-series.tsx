@@ -192,6 +192,7 @@ export default function Command() {
         isLoading={isLoading}
         searchText={searchText}
         onSearchTextChange={setSearchText}
+        preferences={preferences}
         onBack={() => {
           setSelectedEpisode(null);
           setStreams([]);

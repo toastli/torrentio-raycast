@@ -11,6 +11,7 @@ export interface Stream {
 export interface Preferences {
   debridProvider: string;
   apiKey?: string;
+  command: string;
 }
 
 export function StreamView({
@@ -18,18 +19,20 @@ export function StreamView({
   isLoading,
   onBack,
   searchText,
+  preferences,
   onSearchTextChange,
 }: {
   streams: Stream[];
   isLoading: boolean;
   onBack: () => void;
   searchText: string;
+  preferences: Preferences;
   onSearchTextChange: (text: string) => void;
 }) {
-  const openInIINA = (url: string) => {
-    exec(`open -a "IINA" "${url}"`, (error) => {
+  const openInApplication = (url: string) => {
+    exec(preferences.command.replace("{}", url), (error) => {
       if (error) {
-        console.error("Error opening IINA:", error);
+        console.error("Error opening Application:", error);
       }
       closeMainWindow();
     });
@@ -63,7 +66,7 @@ export function StreamView({
           subtitle={stream.title.split("\n")[0]}
           actions={
             <ActionPanel>
-              <Action title="Open In IINA" onAction={() => openInIINA(stream.url)} />
+              <Action title="Open in App" onAction={() => openInApplication(stream.url)} />
               <Action title="Go Back" onAction={onBack} />
             </ActionPanel>
           }

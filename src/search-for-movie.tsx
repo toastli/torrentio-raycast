@@ -84,6 +84,7 @@ export default function Command() {
       <StreamView
         streams={streams}
         isLoading={isLoading}
+        preferences={preferences}
         onBack={() => {
           setSelectedMovie(null);
           setStreams([]);

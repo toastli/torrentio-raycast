@@ -51,18 +51,26 @@
       "title": "API Key",
       "description": "Set the apikey for your provider",
       "required": true
+    },
+    {
+      "name": "command",
+      "type": "textfield",
+      "title": "Command",
+      "description": "The Command that stream is opened in ({} will be replaced with the stream URL)",
+      "required": true,
+      "default": "open -a \"IINA\" \"{}\""
     }
   ],
   "commands": [
     {
       "name": "search-for-movie",
-      "title": "Search for Movie",
+      "title": "Watch Movie",
       "description": "",
       "mode": "view"
     },
     {
       "name": "search-for-tv-series",
-      "title": "Search for TV Series",
+      "title": "Watch TV Series",
       "description": "",
       "mode": "view"
     }
