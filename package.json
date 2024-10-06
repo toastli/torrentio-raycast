@@ -1,0 +1,93 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "torrentio",
+  "title": "Torrentio",
+  "description": "",
+  "icon": "extension-icon.png",
+  "author": "braden_verroen_toastli",
+  "categories": [
+    "Media",
+    "Fun"
+  ],
+  "license": "MIT",
+  "preferences": [
+    {
+      "name": "debridProvider",
+      "type": "dropdown",
+      "required": true,
+      "title": "Debrid provider",
+      "description": "Select your debrid provider",
+      "default": "realdebrid",
+      "data": [
+        {
+          "title": "RealDebrid",
+          "value": "realdebrid"
+        },
+        {
+          "title": "Premiumize",
+          "value": "premiumize"
+        },
+        {
+          "title": "AllDebrid",
+          "value": "alldebrid"
+        },
+        {
+          "title": "DebridLink",
+          "value": "debridlink"
+        },
+        {
+          "title": "Offcloud",
+          "value": "offcloud"
+        },
+        {
+          "title": "Put.io",
+          "value": "putio"
+        }
+      ]
+    },
+    {
+      "name": "apiKey",
+      "type": "password",
+      "title": "API Key",
+      "description": "Set the apikey for your provider",
+      "required": true
+    }
+  ],
+  "commands": [
+    {
+      "name": "search-for-movie",
+      "title": "Search for Movie",
+      "description": "",
+      "mode": "view"
+    },
+    {
+      "name": "search-for-tv-series",
+      "title": "Search for TV Series",
+      "description": "",
+      "mode": "view"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.83.2",
+    "@raycast/utils": "^1.17.0",
+    "@types/lodash": "^4.17.10",
+    "lodash": "^4.17.21",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.11",
+    "@types/node": "20.8.10",
+    "@types/react": "18.3.3",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "ray build --skip-types -e dist -o dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
