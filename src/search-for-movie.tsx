@@ -47,11 +47,22 @@ export default function Command() {
   }, [selectedMovie, getStreams]);
 
   const getMovies = useCallback(async (text: string) => {
+    setLoading(true);
     if (!text) {
-      setMovies([]);
+      const data = await fetchJSON<{ metas?: Movie[] }>(
+        `https://cinemeta-catalogs.strem.io/top/catalog/movie/top.json`,
+      );
+      setMovies(
+        data.metas?.map((s) => ({
+          id: s.id,
+          name: s.name,
+          poster: s.poster,
+          releaseinfo: s.releaseinfo,
+        })) || [],
+      );
+      setLoading(false);
       return;
     }
-    setLoading(true);
     try {
       const encodedSearch = encodeURIComponent(text);
       const data = await fetchJSON<{ metas?: Movie[] }>(

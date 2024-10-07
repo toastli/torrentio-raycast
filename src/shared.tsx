@@ -1,6 +1,7 @@
 import { Grid, List, ActionPanel, Action, closeMainWindow, Icon } from "@raycast/api";
 import { exec } from "child_process";
 import fetch from "node-fetch";
+import { useEffect } from "react";
 
 export interface Stream {
   name: string;
@@ -18,16 +19,12 @@ export function StreamView({
   streams,
   isLoading,
   onBack,
-  searchText,
   preferences,
-  onSearchTextChange,
 }: {
   streams: Stream[];
   isLoading: boolean;
   onBack: () => void;
-  searchText: string;
   preferences: Preferences;
-  onSearchTextChange: (text: string) => void;
 }) {
   const openInApplication = (url: string) => {
     exec(preferences.command.replace("{}", url), (error) => {
@@ -39,7 +36,7 @@ export function StreamView({
   };
 
   return (
-    <List isLoading={isLoading} isShowingDetail={false} searchText={searchText} onSearchTextChange={onSearchTextChange}>
+    <List isLoading={isLoading} isShowingDetail={false}>
       {streams.map((stream, index) => (
         <List.Item
           key={index}
@@ -91,10 +88,13 @@ export function MediaGrid<T extends { id: string; name: string; poster: string }
   navigationTitle: string;
   searchBarPlaceholder: string;
 }) {
+  useEffect(() => {
+    onSearchTextChange(""); // Fetch the trending movies/tv on initialization
+  }, []);
   return (
     <Grid
       columns={5}
-      inset={Grid.Inset.Zero}
+      inset={Grid.Inset.Zero} // Idk why this doesnt work
       navigationTitle={navigationTitle}
       searchBarPlaceholder={searchBarPlaceholder}
       isLoading={isLoading}

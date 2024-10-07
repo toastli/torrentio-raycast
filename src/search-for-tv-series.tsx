@@ -1,4 +1,4 @@
-import { List, ActionPanel, Action, getPreferenceValues } from "@raycast/api";
+import { List, ActionPanel, Action, getPreferenceValues, clearSearchBar } from "@raycast/api";
 import { useState, useEffect, useCallback } from "react";
 import { debounce } from "lodash";
 import { StreamView, MediaGrid, Stream, Preferences, fetchJSON } from "./shared";
@@ -25,14 +25,12 @@ function EpisodeView({
   isLoading,
   onSelectEpisode,
   onBack,
-  setSearchText,
 }: {
   series: TVSeries;
   episodes: Episode[];
   isLoading: boolean;
   onSelectEpisode: (episode: Episode) => void;
   onBack: () => void;
-  setSearchText: (text: string) => void;
 }) {
   const groupedEpisodes = episodes.reduce(
     (acc, episode) => {
@@ -66,14 +64,13 @@ function EpisodeView({
           {eps.map((episode) => (
             <List.Item
               key={episode.id}
-              title={`S${episode.season}E${episode.episode}: ${episode.name}`}
+              title={`S${episode.season.toString().padStart(2, "0")}E${episode.episode.toString().padStart(2, "0")}: ${episode.name}`}
               subtitle={episode.overview}
               actions={
                 <ActionPanel>
                   <Action
                     title="Select Episode"
                     onAction={() => {
-                      setSearchText(""); // Reset search text when selecting an episode
                       onSelectEpisode(episode);
                     }}
                   />
@@ -96,13 +93,9 @@ export default function Command() {
   const [selectedSeries, setSelectedSeries] = useState<TVSeries | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
   const preferences = getPreferenceValues<Preferences>();
-  const [searchText, setSearchText] = useState("");
 
   const getStreams = useCallback(
     async (id: string) => {
-      console.log(
-        `https://torrentio.strem.fun/${preferences.debridProvider}=${preferences.apiKey}/stream/series/${id}.json`,
-      );
       setLoading(true);
       try {
         const data = await fetchJSON<{ streams?: Stream[] }>(
@@ -141,12 +134,25 @@ export default function Command() {
   }, []);
 
   const getSeries = useCallback(async (text: string) => {
+    setLoading(true);
     if (!text) {
-      setSeries([]);
+      // Get trending movies
+      const data = await fetchJSON<{ metas?: TVSeries[] }>(
+        `https://cinemeta-catalogs.strem.io/top/catalog/series/top.json`,
+      );
+      setSeries(
+        data.metas?.map((s) => ({
+          id: s.id,
+          name: s.name,
+          poster: s.poster,
+          releaseinfo: s.releaseinfo,
+        })) || [],
+      );
+      setLoading(false);
       return;
     }
-    setLoading(true);
     try {
+      // This is the actual search
       const encodedSearch = encodeURIComponent(text);
       const data = await fetchJSON<{ metas?: TVSeries[] }>(
         `https://v3-cinemeta.strem.io/catalog/series/top/search=${encodedSearch}.json`,
@@ -186,17 +192,15 @@ export default function Command() {
   }, [selectedEpisode, getStreams]);
 
   if (selectedEpisode) {
+    clearSearchBar();
     return (
       <StreamView
         streams={streams}
         isLoading={isLoading}
-        searchText={searchText}
-        onSearchTextChange={setSearchText}
         preferences={preferences}
         onBack={() => {
           setSelectedEpisode(null);
           setStreams([]);
-          setSearchText(""); // Reset search text when going back
         }}
       />
     );
@@ -209,7 +213,6 @@ export default function Command() {
         episodes={episodes}
         isLoading={isLoading}
         onSelectEpisode={setSelectedEpisode}
-        setSearchText={setSearchText}
         onBack={() => {
           setSelectedSeries(null);
           setEpisodes([]);
